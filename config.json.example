@@ -1,0 +1,35 @@
+{
+  "number_of_turns": 12,
+  "palette": [
+    {
+      "name": "Red",
+      "letter": "R",
+      "hex_code": "c0392b"
+    },
+    {
+      "name": "Green",
+      "letter": "G",
+      "hex_code": "27ae60"
+    },
+    {
+      "name": "Blue",
+      "letter": "B",
+      "hex_code": "2e86c1"
+    },
+    {
+      "name": "Yellow",
+      "letter": "Y",
+      "hex_code": "f4d03f"
+    },
+    {
+      "name": "Purple",
+      "letter": "P",
+      "hex_code": "8e44ad"
+    },
+    {
+      "name": "White",
+      "letter": "W",
+      "hex_code": "ffffff"
+    }
+  ]
+}
