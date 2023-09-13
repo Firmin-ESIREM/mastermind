@@ -1,6 +1,6 @@
 from json import loads
 from color import Color
-from game_funcs import generate_combination, number_of_correct_colors, number_of_correct_placements, show_score
+from game_funcs import generate_combination, number_of_correct_colors, number_of_correct_placements, show_score, computer_solve
 from sys import exit as sys_exit
 from os.path import isfile
 
@@ -50,6 +50,11 @@ show_score(stat["score"], stat["nb_parti"])
 
 def game():
     combination = generate_combination(palette, combination_nb_elements)
+    computer_number_of_turns = computer_solve(palette, combination, combination_nb_elements, number_of_turns)
+    if computer_number_of_turns is None:
+        print("L'ordinateur n'a pas trouvé.")
+    else:
+        print(f"L'ordinateur a trouvé en {computer_number_of_turns} coups.")
     i = 0
     while i < number_of_turns:
         i += 1

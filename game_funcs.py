@@ -1,6 +1,48 @@
 from color import Color
 from random import choice
 
+possible_combinations = []
+
+
+def computer_solve(palette: list[Color], combination: list[Color], combination_nb_elements: int, number_of_turns: int) -> None | int:
+    possible_combinations.clear()
+    combination_loop(0, combination_nb_elements, palette, [])
+    previous_guesses = []
+    for i in range(number_of_turns):
+        guess = []
+        if len(previous_guesses) == 0:
+            guess = possible_combinations[0]
+        else:
+            for possible_combination in possible_combinations:
+                valid_guess = True
+                guess = possible_combination
+                for previous_guess in previous_guesses:
+                    if not(number_of_correct_placements(previous_guess["guess"], possible_combination) == previous_guess["correct_placements"] and number_of_correct_colors(previous_guess["guess"], possible_combination) == previous_guess["correct_colors"]):
+                        valid_guess = False
+                        break
+                if valid_guess:
+                    break
+        correct_placements = number_of_correct_placements(combination, guess)
+        if correct_placements == 4:
+            return i + 1
+        correct_colors = number_of_correct_colors(combination, guess)
+        previous_guesses.append({
+            "guess": guess,
+            "correct_placements": correct_placements,
+            "correct_colors": correct_colors
+        })
+    return None
+
+
+def combination_loop(iteration: int, combination_nb_elements: int, palette: list[Color], colors: list[Color]):
+    if iteration < combination_nb_elements:
+        for color in palette:
+            colors_rec = colors[:]
+            colors_rec.append(color)
+            combination_loop(iteration + 1, combination_nb_elements, palette, colors_rec)
+    else:
+        possible_combinations.append(colors)
+
 
 def generate_combination(palette: list[Color], combination_nb_elements: int) -> list[Color]:
     combination = []
@@ -36,6 +78,6 @@ def number_of_correct_placements(combination: list[Color], guess: list[Color]) -
 def show_score(score, nb_parti):
     ratio_text = ""
     if nb_parti != 0:
-        ratio = score/nb_parti
+        ratio = score / nb_parti
         ratio_text = f"Score moyen : {ratio}"
-    print (f"Nombre de parties : {nb_parti}\nScore total : {score}\n{ratio_text}")
+    print(f"Nombre de parties : {nb_parti}\nScore total : {score}\n{ratio_text}")
