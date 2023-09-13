@@ -1,5 +1,6 @@
 {
   "number_of_turns": 12,
+  "number_of_elements_in_the_combination": 4,
   "palette": [
     {
       "name": "Red",

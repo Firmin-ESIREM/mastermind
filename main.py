@@ -11,23 +11,36 @@ palette = []
 for color in config["palette"]:
     palette.append(Color(color["name"], color["letter"], color["hex_code"]))
 
+combination_nb_elements = config["number_of_elements_in_the_combination"]
+number_of_turns = config["number_of_turns"]
+
 
 def find_color_by_letter(letter: str) -> Color:
     return next((x for x in palette if x.letter == letter), None)
 
 
-combination = generate_combination(palette)
+combination = generate_combination(palette, combination_nb_elements)
 
-print(combination)
+print(f"""
+    ###################
+    #                 #
+    #   MASTERMIND    #
+    #                 #
+    ###################
 
-for k in range(config["number_of_turns"]):
+Nombre d'essais : {number_of_turns}.
+Nombre de couleurs dans la combinaison : {combination_nb_elements}.
+""")
+
+
+for k in range(number_of_turns):
     valid_guess = False
     guess = []
     while not valid_guess:
         guess = []
         raw_guess = input(f"Tour {k + 1} | Entrez une combinaison : ")
-        if len(raw_guess) != 4:
-            print("Entrée invalide, trop de caractères.")
+        if len(raw_guess) != combination_nb_elements:
+            print("Entrée invalide, mauvais nombre de caractères.")
             continue
         for character in raw_guess:
             guessed_color = find_color_by_letter(character)
@@ -39,7 +52,7 @@ for k in range(config["number_of_turns"]):
                 print(f"Entrée invalide, couleur {character} non reconnue.")
                 break
     correct_placements = number_of_correct_placements(combination, guess)
-    if correct_placements == 4:
+    if correct_placements == combination_nb_elements:
         print("C'est gagné ! Vous avez trouvé la bonne combinaison.")
         break
     correct_colors = number_of_correct_colors(combination, guess)

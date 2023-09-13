@@ -2,9 +2,9 @@ from color import Color
 from random import choice
 
 
-def generate_combination(palette: list[Color]) -> list[Color]:
+def generate_combination(palette: list[Color], combination_nb_elements: int) -> list[Color]:
     combination = []
-    for _ in range(4):
+    for _ in range(combination_nb_elements):
         combination.append(choice(palette))
     return combination
 
