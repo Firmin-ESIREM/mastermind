@@ -32,3 +32,10 @@ def number_of_correct_placements(combination: list[Color], guess: list[Color]) -
             number += 1
     return number
 
+
+def show_score(score, nb_parti):
+    ratio_text = ""
+    if nb_parti != 0:
+        ratio = score/nb_parti
+        ratio_text = f"Score moyen : {ratio}"
+    print (f"Nombre de parties : {nb_parti}\nScore total : {score}\n{ratio_text}")
