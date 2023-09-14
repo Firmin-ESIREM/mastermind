@@ -124,5 +124,5 @@ def show_score(score, nb_parti):
     ratio_text = ""
     if nb_parti != 0:
         ratio = score / nb_parti
-        ratio_text = f"Score moyen : {ratio}"
+        ratio_text = f"Score moyen : {str(round(ratio, 2)).replace('.', ',')}"  # French way of writing floating point numbers.
     messagebox.showinfo("Statistiques", f"Nombre de parties : {nb_parti}\nScore total : {score}\n{ratio_text}")

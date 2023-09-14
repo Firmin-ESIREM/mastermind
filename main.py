@@ -7,7 +7,6 @@ from tkinter import messagebox, Tk, Button, Label, simpledialog, Canvas, W, E
 from tkinter.font import Font
 
 main_window = Tk(className="mastermind-main")
-main_window.eval('tk::PlaceWindow . center')
 main_window.title("MASTERMIND")
 
 with open("config.json", 'r') as f:
