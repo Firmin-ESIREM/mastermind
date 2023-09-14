@@ -17,13 +17,15 @@ def computer_solve(palette: list[Color], combination: list[Color], combination_n
                 valid_guess = True
                 guess = possible_combination
                 for previous_guess in previous_guesses:
-                    if not(number_of_correct_placements(previous_guess["guess"], possible_combination) == previous_guess["correct_placements"] and number_of_correct_colors(previous_guess["guess"], possible_combination) == previous_guess["correct_colors"]):
+                    correct_placements_with_previous = number_of_correct_placements(previous_guess["guess"], possible_combination)
+                    correct_colors_with_previous = number_of_correct_colors(previous_guess["guess"], possible_combination)
+                    if correct_placements_with_previous != previous_guess["correct_placements"] or correct_colors_with_previous != previous_guess["correct_colors"]:
                         valid_guess = False
                         break
                 if valid_guess:
                     break
         correct_placements = number_of_correct_placements(combination, guess)
-        if correct_placements == 4:
+        if correct_placements == combination_nb_elements:
             return i + 1
         correct_colors = number_of_correct_colors(combination, guess)
         previous_guesses.append({
@@ -58,6 +60,8 @@ def number_of_correct_colors(combination: list[Color], guess: list[Color]) -> in
             current_combination[k] = ''
     number = 0
     for k, color_guess in enumerate(guess):
+        if color_guess == combination[k]:
+            continue
         if (color_guess in current_combination) and (current_combination[k] != color_guess):
             for i, combination_color in enumerate(current_combination):
                 if combination_color == color_guess:

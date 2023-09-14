@@ -1,6 +1,7 @@
 from json import loads
 from color import Color
-from game_funcs import generate_combination, number_of_correct_colors, number_of_correct_placements, show_score, computer_solve
+from game_funcs import generate_combination, number_of_correct_colors, number_of_correct_placements, show_score, \
+    computer_solve
 from sys import exit as sys_exit
 from os.path import isfile
 
@@ -17,7 +18,7 @@ number_of_turns = config["number_of_turns"]
 
 
 def init():
-    for file_name in [".nb_parti", ".score"]:
+    for file_name in [".nb_parties", ".score"]:
         with open(file_name, 'w') as f:
             f.write("0")
     print("Fichiers de statistique (ré)initialisés.")
@@ -27,7 +28,7 @@ def find_color_by_letter(letter: str) -> Color:
     return next((x for x in palette if x.letter == letter), None)
 
 
-if not (isfile("nb_parti.txt")) or not (isfile("score.txt")):
+if not (isfile(".nb_parties")) or not (isfile(".score")):
     init()
 
 print(f"""
@@ -42,19 +43,21 @@ Nombre de couleurs dans la combinaison : {combination_nb_elements}.
 """)
 
 stat = {}
-for file in ["nb_parti", "score"]:
+for file in ["nb_parties", "score"]:
     with open('.' + file, 'r') as f:
         stat[file] = int(f.read())
-show_score(stat["score"], stat["nb_parti"])
+show_score(stat["score"], stat["nb_parties"])
 
 
 def game():
     combination = generate_combination(palette, combination_nb_elements)
     computer_number_of_turns = computer_solve(palette, combination, combination_nb_elements, number_of_turns)
+    print("")
     if computer_number_of_turns is None:
         print("L'ordinateur n'a pas trouvé.")
     else:
         print(f"L'ordinateur a trouvé en {computer_number_of_turns} coups.")
+    print("")
     i = 0
     while i < number_of_turns:
         i += 1
@@ -83,42 +86,50 @@ def game():
         print(f"Correct : {correct_placements} | Partiel : {correct_colors}")
         print("------\n")
         if i == 12:
-            print("\nC'est perdu... Vous n'avez pas trouvé la combinaison.\n")
+            print("\nC'est perdu... Vous n'avez pas trouvé la combinaison.\nIl s'agissait de ", end='')
+            for combination_color in combination:
+                print(combination_color, end='')
+            print("\n")
 
-    for file_name in ["nb_parti", "score"]:
+    for file_name in ["nb_parties", "score"]:
         with open('.' + file_name, 'r') as f:
             stat[file_name] = int(f.read())
 
-    stat["score"] += i
-    stat["nb_parti"] += 1
-    for file_name in ["nb_parti", "score"]:
+    if computer_number_of_turns is None:
+        stat["score"] += (i - number_of_turns)
+    else:
+        stat["score"] += (i - computer_number_of_turns)
+    stat["nb_parties"] += 1
+    for file_name in ["nb_parties", "score"]:
         with open('.' + file_name, 'w') as f:
             f.write(str(stat[file_name]))
 
-    show_score(stat["score"], stat["nb_parti"])
-    input_valid = False
-    while not input_valid:
+    show_score(stat["score"], stat["nb_parties"])
+    continuing_input = False
+    while not continuing_input:
         menu = input("\nVoulez-vous reJouer (J), Remettre les stats à zéro (R) ou Quitter (Q) : ")
         menu = menu.upper()
         if menu == 'J':
-            input_valid = True
+            continuing_input = True
             game()
         elif menu == 'R':
-            input_valid = True
             init()
-            game()
         elif menu == 'Q':
-            input_valid = True
+            continuing_input = True
         else:
             print("Veuillez entrer une réponse valide.")
 
 
-main_menu = input("Voulez-vous jouer (J), Remettre les stats à zéro (R) ou Quitter (Q) : ")
-main_menu = main_menu.upper()
-if main_menu == 'J':
-    game()
-elif main_menu == 'R':
-    init()
-    game()
-else:
-    sys_exit(0)
+continuing_answer = False
+while not continuing_answer:
+    main_menu = input("Voulez-vous jouer (J), Remettre les stats à zéro (R) ou Quitter (Q) : ")
+    main_menu = main_menu.upper()
+    if main_menu == 'J':
+        continuing_answer = True
+        game()
+    elif main_menu == 'R':
+        init()
+    elif main_menu == 'Q':
+        sys_exit(0)
+    else:
+        print("Veuillez entrer une réponse valide.")
