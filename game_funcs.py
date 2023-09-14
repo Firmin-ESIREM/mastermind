@@ -6,6 +6,14 @@ possible_combinations = []
 
 
 def computer_solve(palette: list[Color], combination: list[Color], combination_nb_elements: int, number_of_turns: int) -> None | int:
+    """
+    This function automatically finds the correct combination, concurring with the user.
+    :param palette:
+    :param combination:
+    :param combination_nb_elements:
+    :param number_of_turns:
+    :return:
+    """
     possible_combinations.clear()
     combination_loop(0, combination_nb_elements, palette, [])
     previous_guesses = []
@@ -37,7 +45,15 @@ def computer_solve(palette: list[Color], combination: list[Color], combination_n
     return None
 
 
-def combination_loop(iteration: int, combination_nb_elements: int, palette: list[Color], colors: list[Color]):
+def combination_loop(iteration: int, combination_nb_elements: int, palette: list[Color], colors: list[Color]) -> None:
+    """
+    This recursive function loops through all possible combinations.
+    :param iteration:
+    :param combination_nb_elements:
+    :param palette:
+    :param colors:
+    :return:
+    """
     if iteration < combination_nb_elements:
         for color in palette:
             colors_rec = colors[:]
@@ -48,6 +64,12 @@ def combination_loop(iteration: int, combination_nb_elements: int, palette: list
 
 
 def generate_combination(palette: list[Color], combination_nb_elements: int) -> list[Color]:
+    """
+    This function randomly generates a combination.
+    :param palette:
+    :param combination_nb_elements:
+    :return:
+    """
     combination = []
     for _ in range(combination_nb_elements):
         combination.append(choice(palette))
@@ -55,6 +77,12 @@ def generate_combination(palette: list[Color], combination_nb_elements: int) -> 
 
 
 def number_of_correct_colors(combination: list[Color], guess: list[Color]) -> int:  # White pawns
+    """
+    This function calculates the number of pawns of right colors, but placed wrongly.
+    :param combination:
+    :param guess:
+    :return:
+    """
     current_combination = combination[:]
     for k, color_guess in enumerate(guess):
         if current_combination[k] == color_guess:
@@ -73,6 +101,12 @@ def number_of_correct_colors(combination: list[Color], guess: list[Color]) -> in
 
 
 def number_of_correct_placements(combination: list[Color], guess: list[Color]) -> int:  # Red pawns
+    """
+    This function calculates the number of pawns of the right color, placed correctly.
+    :param combination:
+    :param guess:
+    :return:
+    """
     number = 0
     for k, element in enumerate(guess):
         if combination[k] == element:
@@ -81,6 +115,12 @@ def number_of_correct_placements(combination: list[Color], guess: list[Color]) -
 
 
 def show_score(score, nb_parti):
+    """
+    This function shows the current saved score using a Tkinter message box.
+    :param score:
+    :param nb_parti:
+    :return:
+    """
     ratio_text = ""
     if nb_parti != 0:
         ratio = score / nb_parti
