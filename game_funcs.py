@@ -1,5 +1,6 @@
 from color import Color
 from random import choice
+from tkinter import messagebox
 
 possible_combinations = []
 
@@ -84,4 +85,4 @@ def show_score(score, nb_parti):
     if nb_parti != 0:
         ratio = score / nb_parti
         ratio_text = f"Score moyen : {ratio}"
-    print(f"Nombre de parties : {nb_parti}\nScore total : {score}\n{ratio_text}")
+    messagebox.showinfo("Statistiques", f"Nombre de parties : {nb_parti}\nScore total : {score}\n{ratio_text}")

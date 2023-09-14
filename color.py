@@ -6,3 +6,6 @@ class Color:
 
     def __repr__(self) -> str:
         return self.letter
+
+    def __str__(self) -> str:
+        return self.letter

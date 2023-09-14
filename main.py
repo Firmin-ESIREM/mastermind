@@ -4,6 +4,11 @@ from game_funcs import generate_combination, number_of_correct_colors, number_of
     computer_solve
 from sys import exit as sys_exit
 from os.path import isfile
+from tkinter import messagebox, Tk, Button, Label, simpledialog, Canvas, W, E
+from tkinter.font import Font
+
+main_window = Tk(className="mastermind-main")
+main_window.title("MASTERMIND")
 
 with open("config.json", 'r') as f:
     config = loads(f.read())
@@ -21,7 +26,7 @@ def init():
     for file_name in [".nb_parties", ".score"]:
         with open(file_name, 'w') as f:
             f.write("0")
-    print("Fichiers de statistique (ré)initialisés.")
+    messagebox.showinfo("Statistiques", "Fichiers de statistiques (ré)initialisés.")
 
 
 def find_color_by_letter(letter: str) -> Color:
@@ -31,33 +36,26 @@ def find_color_by_letter(letter: str) -> Color:
 if not (isfile(".nb_parties")) or not (isfile(".score")):
     init()
 
-print(f"""
-    ###################
-    #                 #
-    #   MASTERMIND    #
-    #                 #
-    ###################
-
-Nombre d'essais : {number_of_turns}.
-Nombre de couleurs dans la combinaison : {combination_nb_elements}.
-""")
-
 stat = {}
 for file in ["nb_parties", "score"]:
     with open('.' + file, 'r') as f:
         stat[file] = int(f.read())
-show_score(stat["score"], stat["nb_parties"])
+
+window_elements = []
 
 
 def game():
+    for window_element in window_elements:
+        window_element.destroy()
+    window_elements.clear()
     combination = generate_combination(palette, combination_nb_elements)
+    print(combination)
     computer_number_of_turns = computer_solve(palette, combination, combination_nb_elements, number_of_turns)
-    print("")
     if computer_number_of_turns is None:
-        print("L'ordinateur n'a pas trouvé.")
+        found_string = "L'ordinateur n'a pas trouvé."
     else:
-        print(f"L'ordinateur a trouvé en {computer_number_of_turns} coups.")
-    print("")
+        found_string = f"L'ordinateur a trouvé en {computer_number_of_turns} coup{'s' if computer_number_of_turns > 1 else ''}."
+    messagebox.showinfo("Résolution automatique", found_string)
     i = 0
     while i < number_of_turns:
         i += 1
@@ -65,9 +63,9 @@ def game():
         guess = []
         while not valid_guess:
             guess = []
-            raw_guess = input(f"Tour {i} | Entrez une combinaison : ")
+            raw_guess = simpledialog.askstring(f"Tour {i}", f"Entrez une combinaison.")
             if len(raw_guess) != combination_nb_elements:
-                print("Entrée invalide, mauvais nombre de caractères.")
+                messagebox.showerror("Entrée invalide", "Mauvais nombre de caractères.")
                 continue
             for character in raw_guess:
                 guessed_color = find_color_by_letter(character.upper())
@@ -76,20 +74,25 @@ def game():
                     valid_guess = True
                 else:
                     valid_guess = False
-                    print(f"Entrée invalide, couleur {character} non reconnue.")
+                    messagebox.showerror("Entrée invalide", f"Couleur {character} non reconnue.")
                     break
         correct_placements = number_of_correct_placements(combination, guess)
-        if correct_placements == combination_nb_elements:
-            print("\nC'est gagné ! Vous avez trouvé la bonne combinaison.\n")
-            break
         correct_colors = number_of_correct_colors(combination, guess)
-        print(f"Correct : {correct_placements} | Partiel : {correct_colors}")
-        print("------\n")
+        drawing_canvas = Canvas(main_window, width=210, height=30)
+        drawing_canvas.pack()
+        window_elements.append(drawing_canvas)
+        drawing_canvas.create_text(20, 15, font=Font(size=10), fill="#c0392b", text=str(correct_placements), anchor=W)
+        drawing_canvas.create_text(200, 15, font=Font(size=10), fill="#000000", text=str(correct_colors), anchor=E)
+        for k, guessed_color in enumerate(guess):
+            drawing_canvas.create_oval(51 + 30*k, 6, 69 + 30*k, 24, fill='#' + guessed_color.hex_code, outline="")
+        if correct_placements == combination_nb_elements:
+            messagebox.showinfo("C'est gagné !", f"Vous avez trouvé la bonne combinaison en {i} coup{'s' if i > 1 else ''}.")
+            break
         if i == 12:
-            print("\nC'est perdu... Vous n'avez pas trouvé la combinaison.\nIl s'agissait de ", end='')
+            combination_string = ''
             for combination_color in combination:
-                print(combination_color, end='')
-            print("\n")
+                combination_string += str(combination_color)
+            messagebox.showinfo("C'est perdu...", f"Vous n'avez pas trouvé la combinaison.\nIl s'agissait de {combination_string}.")
 
     for file_name in ["nb_parties", "score"]:
         with open('.' + file_name, 'r') as f:
@@ -119,17 +122,14 @@ def game():
         else:
             print("Veuillez entrer une réponse valide.")
 
+window_elements.append(Label(main_window, text=f"Nombre d'essais : {number_of_turns}"))
+window_elements.append(Label(main_window, text=f"Nombre de couleurs dans la combinaison : {combination_nb_elements}"))
+window_elements.append(Button(main_window, text="Jouer", command=game))
+window_elements.append(Button(main_window, text="Réinitialiser les statistiques", command=init))
+window_elements.append(Button(main_window, text="Voir les statistiques", command=lambda:show_score(stat["score"], stat["nb_parties"])))
+window_elements.append(Button(main_window, text="Quitter", command=main_window.destroy))
 
-continuing_answer = False
-while not continuing_answer:
-    main_menu = input("Voulez-vous jouer (J), Remettre les stats à zéro (R) ou Quitter (Q) : ")
-    main_menu = main_menu.upper()
-    if main_menu == 'J':
-        continuing_answer = True
-        game()
-    elif main_menu == 'R':
-        init()
-    elif main_menu == 'Q':
-        sys_exit(0)
-    else:
-        print("Veuillez entrer une réponse valide.")
+for element in window_elements:
+    element.pack()
+
+main_window.mainloop()
