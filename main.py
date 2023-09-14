@@ -3,7 +3,7 @@ from color import Color
 from game_funcs import generate_combination, number_of_correct_colors, number_of_correct_placements, show_score, \
     computer_solve
 from os.path import isfile
-from tkinter import messagebox, Tk, Button, Label, simpledialog, Canvas, W, E
+from tkinter import messagebox, Tk, Button, Label, simpledialog, Canvas, PhotoImage, W, E
 from tkinter.font import Font
 
 main_window = Tk(className="mastermind-main")
@@ -130,6 +130,9 @@ def game():
     for window_element in window_elements:
         window_element.pack()
 
+
+image = PhotoImage(file="cover.png")
+Label(main_window, image=image).pack()
 available_colors = "Couleurs disponibles :"
 window_elements.append(Label(main_window, text=f"Nombre d'essais : {number_of_turns}"))
 window_elements.append(Label(main_window, text=f"Nombre de couleurs dans la combinaison : {combination_nb_elements}"))
